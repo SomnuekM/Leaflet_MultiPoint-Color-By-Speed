@@ -59,7 +59,7 @@ let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Col
   })
 </script>
 ```
-<br/>
+
 ## JSON Data Example 
 ```json
 [
