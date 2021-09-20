@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            z-index: -1;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+    <script>
+        var startPoint = [14.0790606839815, 100.600900053978];
+        var map = L.map('map').setView(startPoint, 16);
+
+        //Google
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            attribution: '&copy;',
+            minZoom: 2,
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(map);
+
+        //Dark
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            minZoom: 2,
+            maxZoom: 20,
+        })
+
+        //Light Gray
+        var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 16
+        })
+
+
+        function getColor(speed) {
+            return speed >= 100 ? '#FF0000' :
+                speed >= 90 ? '#FFC000' :
+                speed >= 80 ? '#FFFF00' :
+                speed >= 70 ? '#80FF00' :
+                '#00E000';
+        };
+
+
+        $.getJSON('https://', function(data) {
+
+            point = L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 5.5,
+                        opacity: .5,
+                        color: getColor(feature.properties.speed),
+                        fillColor: getColor(feature.properties.speed),
+                        fillOpacity: 0.8
+                    })
+                },
+                onEachFeature: function(feature, layer) {
+                    layer._leaflet_id = feature.properties.id;
+
+                    var firstdate = new Date(feature.properties.id);
+                    var DateTime = ("0" + firstdate.getDate()).slice(-2) +
+                        "/" + ("0" + (firstdate.getMonth() + 1)).slice(-2) +
+                        "/" + firstdate.getFullYear() +
+                        " " + ("0" + firstdate.getHours()).slice(-2) +
+                        ":" + ("0" + firstdate.getMinutes()).slice(-2) + ":" + firstdate.getSeconds();;
+
+                    var popupContent = "<p><b>" + DateTime + "</b> </br>" +
+                        "<b>speed : </b>" + feature.properties.speed + "</br>";
+                    if (feature.properties && feature.properties.popupContent) {
+                        popupContent += feature.properties.popupContent;
+                    }
+                    layer.bindPopup(popupContent);
+
+                }
+            });
+
+            // zoom the map to the polyline
+            map.fitBounds(point.getBounds());
+            //Add selected points back into map as green circles.
+            map.addLayer(point);
+
+        });
+    </script>
+</body>
+
+</html>
