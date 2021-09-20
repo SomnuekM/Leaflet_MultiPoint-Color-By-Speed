@@ -59,5 +59,66 @@ let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Col
   })
 </script>
 ```
-
+<br/>
+## JSON Data Example 
+```json
+[
+  {
+    "type": "Feature",
+    "properties": {
+      "id": 1631487601000,
+      "speed": 53
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        100.50063,
+        13.86313
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "id": 1631487603000,
+      "speed": 56
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        100.500895,
+        13.8630333
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "id": 1631487605000,
+      "speed": 57
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        100.50117,
+        13.8629333
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "id": 1631487608000,
+      "speed": 58
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        100.5014516,
+        13.8628333
+      ]
+    }
+  }
+ ]
+```
 
