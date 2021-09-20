@@ -6,17 +6,17 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/133974079-1fe26a34-c4f4-4bb7-8739-dd670e038192.png)
 
-
-    `function getColor(speed) {
+```html
+function getColor(speed) {
             return speed >= 100 ? '#FF0000' :
                 speed >= 90 ? '#FFC000' :
                 speed >= 80 ? '#FFFF00' :
                 speed >= 70 ? '#80FF00' :
                 '#00E000';
-        };
+ };
 
-
-        $.getJSON('https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demo.json', function(data) {
+let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demo.json';
+ $.getJSON(urlJson, function(data) {
 
             point = L.geoJson(data, {
                 pointToLayer: function(feature, latlng) {
@@ -53,6 +53,7 @@
             //Add selected points back into map as green circles.
             map.addLayer(point);
 
-        });`
+  })
+```
 
 
