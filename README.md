@@ -6,6 +6,8 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/133974079-1fe26a34-c4f4-4bb7-8739-dd670e038192.png)
 
+## Code Example
+
 ```html
 <script>
 function getColor(speed) {
