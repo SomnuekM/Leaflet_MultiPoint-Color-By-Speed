@@ -7,6 +7,7 @@
 ![image](https://user-images.githubusercontent.com/58202287/133974079-1fe26a34-c4f4-4bb7-8739-dd670e038192.png)
 
 ```html
+<script>
 function getColor(speed) {
             return speed >= 100 ? '#FF0000' :
                 speed >= 90 ? '#FFC000' :
@@ -54,6 +55,7 @@ let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Col
             map.addLayer(point);
 
   })
+</script>
 ```
 
 
