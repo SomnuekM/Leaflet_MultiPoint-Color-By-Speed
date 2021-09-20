@@ -68,7 +68,7 @@
         };
 
 
-        $.getJSON('https://', function(data) {
+        $.getJSON('https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demo.json', function(data) {
 
             point = L.geoJson(data, {
                 pointToLayer: function(feature, latlng) {
