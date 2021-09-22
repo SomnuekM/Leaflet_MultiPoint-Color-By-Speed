@@ -34,12 +34,13 @@ let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Col
                 onEachFeature: function(feature, layer) {
                     layer._leaflet_id = feature.properties.id;
 
-                    var firstdate = new Date(feature.properties.id);
-                    var DateTime = ("0" + firstdate.getDate()).slice(-2) +
-                        "/" + ("0" + (firstdate.getMonth() + 1)).slice(-2) +
-                        "/" + firstdate.getFullYear() +
-                        " " + ("0" + firstdate.getHours()).slice(-2) +
-                        ":" + ("0" + firstdate.getMinutes()).slice(-2) + ":" + firstdate.getSeconds();;
+                    var d = new Date(feature.properties.id);
+                    var DateTime = ("0" + d.getDate()).slice(-2) +
+                        "/" + ("0" + (d.getMonth() + 1)).slice(-2) +
+                        "/" + d.getFullYear() +
+                        " " + ("0" + d.getHours()).slice(-2) +
+                        ":" + ("0" + d.getMinutes()).slice(-2) + 
+                        ":" + ("0" + d.getSeconds()).slice(-2);
 
                     var popupContent = "<p><b>" + DateTime + "</b> </br>" +
                         "<b>speed : </b>" + feature.properties.speed + "</br>";
