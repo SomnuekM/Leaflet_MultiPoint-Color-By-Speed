@@ -95,33 +95,27 @@
 
     <div id="map"></div>
 
+   
     <div class='clearfix contain'>
 
-        <div class='pin-topright space-right2 space-top2 width28 pad2x pad1y round fill-white'>
-            <div class='small pad2y keyline-bottom'>
-                <div>Point History (Color By Speed)</div>
+        <div class='pin-topright space-right2 space-top2 width28 round pad2x pad1y fill-white'>
+            <div class="form-group">
+                <br>
+                <h3>Point History (Color By Speed)</h3>
                 <a href='#' target='_blank'>
                     Demo Data
                 </a>
             </div>
-            <div class='small pad2y keyline-bottom'>
-                <input type='text' id="getLink" />
-                <button type="submit" value="Submit" onclick="return getLinkOnSubmit();">Submit</button>
-            </div>
-            <div class='small pad2y keyline-bottom'>
-                <div class='fill-cyan dark space-top1_5 fl pad0 center dot'> <span class='icon car' /></div>
-                <div class='strong space-left4'>Driving directions</div>
-                <div class='quiet space-left4' id="TimeStart">
-                    TimeStart : 2021-09-13 05:00
-                </div>
-                <div class='quiet space-left4' id="TimeEnd">
-                    TimeEnd : 2021-09-13 07:30
-                </div>
 
+            <div class="form-group">
+                <input type='text' id="getLink" class="form-control" placeholder="Input Link GeoJson" />
             </div>
 
-            <div class='small pad2y keyline-bottom'>
+            <div>
+                <button type="submit" value="Submit" class="btn btn-primary" onclick="return getLinkOnSubmit();">Submit</button>
+            </div>
 
+            <div>
                 <ol class="rectangle-list">
                     <li><a style='background-color: #FF0000;'> SPEED 100+ </a></li>
                     <li><a style='background-color: #FFC000;'> SPEED 90-99 </a></li>
@@ -134,7 +128,6 @@
 
         </div>
     </div>
-
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
