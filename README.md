@@ -8,7 +8,8 @@
 
 [Example 2](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeedInput.html)
 
-![image](https://user-images.githubusercontent.com/58202287/134482802-07dbc06f-1598-457b-a853-dd447f15fabc.png)
+![image](https://user-images.githubusercontent.com/58202287/134484140-c76500e4-1d1f-4e07-ba4d-adaedf89106c.png)
+
 
 ## Code Example
 
