@@ -6,6 +6,10 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/133974079-1fe26a34-c4f4-4bb7-8739-dd670e038192.png)
 
+[Example 2](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeedInput.html)
+
+![image](https://user-images.githubusercontent.com/58202287/134482802-07dbc06f-1598-457b-a853-dd447f15fabc.png)
+
 ## Code Example
 
 ```html
