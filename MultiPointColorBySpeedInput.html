@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+    <link href='Leaflet.MultiOptionsPolyline/base.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            z-index: -1;
+        }
+        
+        ol {
+            counter-reset: li;
+            /* Initiate a counter */
+            list-style: none;
+            /* Remove default numbering */
+            *list-style: decimal;
+            /* Keep using default numbering for IE6/7 */
+            padding: 0;
+            margin-bottom: 4em;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+        }
+        
+        ol ol {
+            margin: 0 0 0 2em;
+            /* Add some left margin for inner lists */
+        }
+        
+        .rectangle-list a {
+            border-radius: 5px;
+            position: relative;
+            display: block;
+            padding: .4em .4em .4em .8em;
+            *padding: .4em;
+            margin: .5em 0 .5em 2.5em;
+            background: rgb(236, 235, 235);
+            color: #444;
+            text-decoration: none;
+            transition: all .3s ease-out;
+        }
+        
+        .rectangle-list a:hover {
+            background: #eee;
+        }
+        
+        .rectangle-list a:before {
+            content: counter(li);
+            counter-increment: li;
+            position: absolute;
+            left: -2.5em;
+            top: 50%;
+            margin-top: -1em;
+            background: #838282;
+            height: 2em;
+            width: 2em;
+            line-height: 2em;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        
+        .rectangle-list a:after {
+            position: absolute;
+            content: '';
+            border: .5em solid transparent;
+            left: -1em;
+            top: 50%;
+            margin-top: -.5em;
+            transition: all .3s ease-out;
+        }
+        
+        .rectangle-list a:hover:after {
+            left: -.5em;
+            border-left-color: #fa8072;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <div class='clearfix contain'>
+
+        <div class='pin-topright space-right2 space-top2 width28 pad2x pad1y round fill-white'>
+            <div class='small pad2y keyline-bottom'>
+                <div>Point History (Color By Speed)</div>
+                <a href='https://raw.githubusercontent.com/SomnuekM/MultiOptionsPolyline/main/data/test.json' target='_blank'>
+                    Demo Data
+                </a>
+            </div>
+            <div class='small pad2y keyline-bottom'>
+                <input type='text' id="getLink" />
+                <button type="submit" value="Submit" onclick="return getLinkOnSubmit();">Submit</button>
+            </div>
+            <div class='small pad2y keyline-bottom'>
+                <div class='fill-cyan dark space-top1_5 fl pad0 center dot'> <span class='icon car' /></div>
+                <div class='strong space-left4'>Driving directions</div>
+                <div class='quiet space-left4' id="TimeStart">
+                    TimeStart : 2021-09-13 05:00
+                </div>
+                <div class='quiet space-left4' id="TimeEnd">
+                    TimeEnd : 2021-09-13 07:30
+                </div>
+
+            </div>
+
+            <div class='small pad2y keyline-bottom'>
+
+                <ol class="rectangle-list">
+                    <li><a style='background-color: #FF0000;'> SPEED 100+ </a></li>
+                    <li><a style='background-color: #FFC000;'> SPEED 90-99 </a></li>
+                    <li><a style='background-color: #FFFF00;'> SPEED 80-89 </a></li>
+                    <li><a style='background-color: #80FF00;'> SPEED 70-79 </a></li>
+                    <li><a style='background-color: #00E000;'> SPEED 0-69 </a></li>
+                </ol>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+    <script>
+        var startPoint = [14.0790606839815, 100.600900053978];
+        var map = L.map('map').setView(startPoint, 16);
+
+        //Google
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            attribution: '&copy;',
+            minZoom: 2,
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(map);
+
+        //Dark
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            minZoom: 2,
+            maxZoom: 20,
+        })
+
+        //Light Gray
+        var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 16
+        })
+
+        var point;
+
+        function getLinkOnSubmit() {
+            var linkJson = document.getElementById("getLink").value;
+
+            if (!linkJson) {
+
+                alert("Please Input Link Json");
+
+            } else {
+
+                function getColor(speed) {
+                    return speed >= 100 ? '#FF0000' :
+                        speed >= 90 ? '#FFC000' :
+                        speed >= 80 ? '#FFFF00' :
+                        speed >= 70 ? '#80FF00' :
+                        '#00E000';
+                };
+
+
+                $.getJSON(linkJson, function(data) {
+
+                    if (point) {
+                        point.removeFrom(map);
+                    }
+
+                    point = L.geoJson(data, {
+                        pointToLayer: function(feature, latlng) {
+                            return L.circleMarker(latlng, {
+                                radius: 5.5,
+                                opacity: .5,
+                                color: getColor(feature.properties.speed),
+                                fillColor: getColor(feature.properties.speed),
+                                fillOpacity: 0.8
+                            })
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer._leaflet_id = feature.properties.id;
+
+                            var d = new Date(feature.properties.id);
+                            var DateTime = ("0" + d.getDate()).slice(-2) +
+                                "/" + ("0" + (d.getMonth() + 1)).slice(-2) +
+                                "/" + d.getFullYear() +
+                                " " + ("0" + d.getHours()).slice(-2) +
+                                ":" + ("0" + d.getMinutes()).slice(-2) +
+                                ":" + ("0" + d.getSeconds()).slice(-2);
+
+                            var popupContent = "<p><b>" + DateTime + "</b> </br>" +
+                                "<b>speed : </b>" + feature.properties.speed + "</br>";
+                            if (feature.properties && feature.properties.popupContent) {
+                                popupContent += feature.properties.popupContent;
+                            }
+                            layer.bindPopup(popupContent);
+
+                        }
+                    });
+
+                    // zoom the map to the polyline
+                    map.fitBounds(point.getBounds());
+                    //Add selected points back into map as green circles.
+                    map.addLayer(point);
+
+                });
+
+            }
+        }
+    </script>
+</body>
+
+</html>
