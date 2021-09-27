@@ -12,6 +12,8 @@
 
 [Highcharts StockChart](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/speedChart.html)
 
+![image](https://user-images.githubusercontent.com/58202287/134884807-e7350f4e-b1c5-45f3-8ecc-0260c5dcec5a.png)
+
 
 ## Code Example
 
