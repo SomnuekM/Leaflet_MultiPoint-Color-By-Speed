@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+      <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- add icon link -->
+    <link rel = "icon" href ="hybrid-car.png" type = "image/x-icon">
+    <title>Highstock Speed Example</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=K2D:wght@300&display=swap');
+        body {
+            font-family: 'K2D', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container" style="height: 735px"></div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.getJSON('https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demoGeoJson.geojson', function(response) {
+                var data1 = [];
+                for (let i in response.features) {
+                    data1.push([response.features[i].properties.id, response.features[i].properties.speed]);
+
+                }
+                options1.series[0].data = data1;
+                var chart = new Highcharts.stockChart(options1)
+            });
+
+            var options1 = {
+                chart: {
+                    renderTo: 'container',
+                    type: 'line'
+                },
+                time: {
+                    useUTC: false
+                },
+                rangeSelector: {
+                    verticalAlign: 'top',
+                    buttons: [{
+                        type: 'hour',
+                        count: 2,
+                        text: '2h'
+                    }, {
+                        type: 'all',
+                        count: 1,
+                        text: 'All'
+                    }],
+                    selected: 0,
+                    inputEnabled: true,
+                    inputPosition: {
+                        align: 'left',
+                        x: 0,
+                        y: 0
+                    },
+                    buttonPosition: {
+                        align: 'right',
+                        x: 0,
+                        y: 0
+                    }
+                },
+
+                colors: ['#4e73df'],
+                title: {
+                    text: 'Tracking Speed Vehicle',
+                    style: {
+                        fontFamily: 'K2D,serif',
+                        fontSize: '11pt',
+                        fontWeight: 'bold'
+                    }
+                },
+
+                subtitle: {
+                    text: '',
+                    style: {
+                        fontFamily: 'K2D,serif',
+                        fontSize: '9pt'
+                    }
+                },
+                navigator: {
+                    enabled: true
+                },
+                credits: {
+                    enabled: false
+                },
+                scrollbar: {
+                    enabled: false
+                },
+
+                plotOptions: {
+                    series: {
+                        animation: false
+                    },
+                    line: {
+                        dataLabels: {
+                            enabled: true,
+                            style: {
+                                textShadow: '0 0 3px white, 0 0 3px white'
+                            }
+                        },
+                        enableMouseTracking: true
+                    }
+                },
+                xAxis: {
+                    categories: [],
+                    type: 'datetime',
+                    labels: {
+                        format: '{value:%H:%M}',
+                        style: {
+                            fontFamily: 'K2D,serif',
+                            fontWeight: 'normal',
+                            fontSize: '9pt'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'speed',
+                    marker: {
+                        enabled: false,
+                        radius: 3
+                    },
+                    shadow: true
+                }]
+
+
+            };
+
+
+        });
+    </script>
+
+</body>
+
+</html>
