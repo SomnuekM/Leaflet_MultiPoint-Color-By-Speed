@@ -10,6 +10,8 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/134484140-c76500e4-1d1f-4e07-ba4d-adaedf89106c.png)
 
+[Highcharts StockChart](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/speedChart.html)
+
 
 ## Code Example
 
