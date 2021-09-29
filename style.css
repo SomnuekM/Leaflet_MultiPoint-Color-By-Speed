@@ -13,7 +13,7 @@ body {
 
 .width28 {
     width: 280px;
-    height: 735px;
+    height: 753px;
     float: left;
     overflow: scroll;
 }
@@ -23,12 +23,13 @@ body {
 ------------------------------------------------------- */
 
 .space-right2 {
-    margin-right: 20px;
+    margin-right: 0px;
 }
 
 .space-top2 {
-    margin-top: 10px;
+    margin-top: 0px;
 }
+
 
 
 /* Padding
