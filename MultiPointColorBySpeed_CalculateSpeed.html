@@ -57,27 +57,17 @@
             <button type="submit" value="Submit" class="btn btn-primary" onclick="return getLinkOnSubmit();">Submit</button>
         </div>
 
-        <div>
-            <ol class="rectangle-list">
-                <li><a style='background-color: #FF0000;'> SPEED 101+</a></li>
-                <li><a style='background-color: #FFC000;'> SPEED 91-100</a></li>
-                <li><a style='background-color: #FFFF00;'> SPEED 81-90</a></li>
-                <li><a style='background-color: #80FF00;'> SPEED 71-80</a></li>
-                <li><a style='background-color: #00E000;'> SPEED 1-70</a></li>
-                <li><a style='background-color: #669999;'> SPEED 0</a></li>
-            </ol>
+        <div id="speedRange"></div>
 
-        </div>
+        <div id="results"></div>
 
-        <div id="results">
-        </div>
     </div>
 
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script>
+   <script>
         function openNav() {
             document.getElementById("mySidenav").style.width = "280px";
             document.getElementById("mySidenav").style.display = "block";
@@ -89,7 +79,7 @@
         }
     </script>
 
-   <script>
+    <script>
         var startPoint = [14.0790606839815, 100.600900053978];
         var map = L.map('map').setView(startPoint, 16);
 
@@ -111,14 +101,12 @@
                 alert("Please Input Link Json");
 
             } else {
+                var inputSpeed = document.getElementById("speedSet").value;
 
                 function getColor(speed) {
-                    return speed > 100 ? '#FF0000' :
-                        speed > 90 ? '#FFC000' :
-                        speed > 80 ? '#FFFF00' :
-                        speed > 70 ? '#80FF00' :
-                        speed > 0 ? '#00E000' :
-                        '#669999';
+                    return speed > inputSpeed ? '#FF0000' :
+                        speed > 0 ? '#00e600' :
+                        '#ffaa00';
                 };
 
                 function formatDateTime(dateTimeData) {
@@ -163,8 +151,11 @@
                         });
                     }
                     console.log(dataSet.length + " points")
-
                     var dateData = formatDateTime(dataSet[0].time)[0] + " - " + formatDateTime(dataSet[0].time)[1] + " to " + formatDateTime(dataSet[dataSet.length - 1].time)[1]
+
+                    $.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + dataSet[0].coord[1] + '&lon=' + dataSet[0].coord[0] + '', function(data) {
+                        console.log(data.address.city_district);
+                    });
 
                     function speedCatch(data, floor) {
 
@@ -183,10 +174,16 @@
                         return newData;
                     }
 
-                    if (!document.getElementById("speedSet").value) {
+                    if (!inputSpeed) {
                         alert("Please Input Speed Limit");
                     } else {
-                        let set1 = speedCatch(dataSet, document.getElementById("speedSet").value)
+
+                        document.getElementById("speedRange").innerHTML = `<ol class="rectangle-list">
+                            <li><a style='background-color: #FF0000;'> SPEED ${parseInt(inputSpeed)+1}+</a></li>
+                            <li><a style='background-color: #00e600;'> SPEED 1-${inputSpeed}</a></li>
+                            <li><a style='background-color: #ffaa00;'> SPEED 0</a></li>
+                        </ol>`
+                        let set1 = speedCatch(dataSet, inputSpeed)
                         console.log(set1)
 
                         var resultText = "";
@@ -195,8 +192,6 @@
                             if (set1[j].length != 0) {
                                 var firstArr = set1[j][0]
                                 var lastArr = set1[j][set1[j].length - 1]
-
-
                                 var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
                                 resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
 
@@ -236,6 +231,7 @@
                             layer.bindPopup(popupContent);
 
                         }
+
                     });
 
                     // zoom the map to the polyline
