@@ -32,7 +32,7 @@
 <body>
 
     <div id="map"></div>
-    <div class='clearfix contain'>
+     <div class='clearfix contain'>
 
         <div class='pin-topright space-right2 space-top2 width28 round pad2x pad1y fill-white'>
             <div class="form-group">
@@ -45,7 +45,7 @@
 
             <div class="form-group">
                 <label for="speedSet">Speed Limit</label>
-                <input type='number' id="speedSet" class="form-control col-md-6" placeholder="100" />
+                <input type='number' id="speedSet" class="form-control col-md-6" placeholder="101" />
 
                 <label for="getLink">Link</label>
                 <input type='text' id="getLink" class="form-control" placeholder="Input Link GeoJson" />
@@ -57,11 +57,12 @@
 
             <div>
                 <ol class="rectangle-list">
-                    <li><a style='background-color: #FF0000;'> SPEED 100+ </a></li>
-                    <li><a style='background-color: #FFC000;'> SPEED 90-99 </a></li>
-                    <li><a style='background-color: #FFFF00;'> SPEED 80-89 </a></li>
-                    <li><a style='background-color: #80FF00;'> SPEED 70-79 </a></li>
-                    <li><a style='background-color: #00E000;'> SPEED 0-69 </a></li>
+                    <li><a style='background-color: #FF0000;'> SPEED 101+</a></li>
+                    <li><a style='background-color: #FFC000;'> SPEED 91-100</a></li>
+                    <li><a style='background-color: #FFFF00;'> SPEED 81-90</a></li>
+                    <li><a style='background-color: #80FF00;'> SPEED 71-80</a></li>
+                    <li><a style='background-color: #00E000;'> SPEED 1-70</a></li>
+                    <li><a style='background-color: #669999;'> SPEED 0</a></li>
                 </ol>
 
             </div>
@@ -79,7 +80,7 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
 
 
-    <script>
+   <script>
         var startPoint = [14.0790606839815, 100.600900053978];
         var map = L.map('map').setView(startPoint, 16);
 
@@ -103,11 +104,12 @@
             } else {
 
                 function getColor(speed) {
-                    return speed >= 100 ? '#FF0000' :
-                        speed >= 90 ? '#FFC000' :
-                        speed >= 80 ? '#FFFF00' :
-                        speed >= 70 ? '#80FF00' :
-                        '#00E000';
+                    return speed > 100 ? '#FF0000' :
+                        speed > 90 ? '#FFC000' :
+                        speed > 80 ? '#FFFF00' :
+                        speed > 70 ? '#80FF00' :
+                        speed > 0 ? '#00E000' :
+                        '#669999';
                 };
 
                 function formatDateTime(dateTimeData) {
@@ -143,6 +145,7 @@
                     // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
                     var resp = data.features;
                     var dataSet = [];
+
                     for (const i in resp) {
                         dataSet.push({
                             "time": resp[i].properties.id,
@@ -152,13 +155,15 @@
                     }
                     console.log(dataSet.length + " points")
 
+                    var dateData = formatDateTime(dataSet[0].time)[0] + " - " + formatDateTime(dataSet[0].time)[1] + " " + formatDateTime(dataSet[dataSet.length - 1].time)[1]
+
                     function speedCatch(data, floor) {
 
                         var newData = [];
                         var arr = [];
                         data.forEach((dat, index, old) => {
 
-                            if (dat.speed >= floor) {
+                            if (dat.speed > floor) {
                                 arr.push(dat);
                                 if (index + 1 == old.length && arr) newData.push(arr);
                             } else {
@@ -182,7 +187,7 @@
                                 var firstArr = set1[j][0]
                                 var lastArr = set1[j][set1[j].length - 1]
 
-                                var dateData = formatDateTime(firstArr.time)[0]
+
                                 var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
                                 resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
 
