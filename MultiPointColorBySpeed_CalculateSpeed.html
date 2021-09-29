@@ -91,59 +91,52 @@
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         }).addTo(map);
 
+        function formatDateTime(dateTimeData) {
+            let dateTime = new Date(dateTimeData);
+            var fullDate = ("0" + dateTime.getDate()).slice(-2) +
+                "/" + ("0" + (dateTime.getMonth() + 1)).slice(-2) +
+                "/" + dateTime.getFullYear()
+            var fullTime = ("0" + dateTime.getHours()).slice(-2) +
+                ":" + ("0" + dateTime.getMinutes()).slice(-2) +
+                ":" + ("0" + dateTime.getSeconds()).slice(-2);
+            return [fullDate, fullTime];
+        }
+
+        function timeDiffCalc(dateFuture, dateNow) {
+            let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+
+            // calculate minutes
+            const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+            diffInMilliSeconds -= minutes * 60;
+
+            // calculate seconds
+            var seconds = diffInMilliSeconds % 60;
+
+            let difference = '';
+            var color = '',
+                Min = ``;
+            if (minutes >= 2) {
+                color = '#FF0000';
+                Min = `<b style='color:` + color + `;'>${minutes} M ${seconds} S</b>`
+            } else {
+                Min = `<span style='color:#000000;'>${minutes} M ${seconds} S</span>`
+            }
+            difference += (minutes === 0) ? `<span>${seconds} S</span>` : Min;
+
+            return difference;
+        }
+
         var point;
 
         function getLinkOnSubmit() {
             var linkJson = document.getElementById("getLink").value;
-            // var linkJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demoGeoJson.geojson'
-            if (!linkJson) {
+            var inputSpeed = document.getElementById("speedSet").value;
 
-                alert("Please Input Link Json");
+            if (!linkJson || !inputSpeed) {
+
+                alert("Please Input Link Json AND Speed Limit");
 
             } else {
-                var inputSpeed = document.getElementById("speedSet").value;
-
-                function getColor(speed) {
-                    return speed > inputSpeed ? '#FF0000' :
-                        speed > 0 ? '#00e600' :
-                        '#ffaa00';
-                };
-
-                function formatDateTime(dateTimeData) {
-                    let dateTime = new Date(dateTimeData);
-                    var fullDate = ("0" + dateTime.getDate()).slice(-2) +
-                        "/" + ("0" + (dateTime.getMonth() + 1)).slice(-2) +
-                        "/" + dateTime.getFullYear()
-                    var fullTime = ("0" + dateTime.getHours()).slice(-2) +
-                        ":" + ("0" + dateTime.getMinutes()).slice(-2) +
-                        ":" + ("0" + dateTime.getSeconds()).slice(-2);
-                    return [fullDate, fullTime];
-                }
-
-                function timeDiffCalc(dateFuture, dateNow) {
-                    let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
-
-                    // calculate minutes
-                    const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
-                    diffInMilliSeconds -= minutes * 60;
-
-                    // calculate seconds
-                    var seconds = diffInMilliSeconds % 60;
-
-                    let difference = '';
-                    var color = '',
-                        Min = ``;
-                    if (minutes >= 2) {
-                        color = '#FF0000';
-                        Min = `<b style='color:` + color + `;'>${minutes} M ${seconds} S</b>`
-                    } else {
-                        Min = `<span style='color:#000000;'>${minutes} M ${seconds} S</span>`
-                    }
-                    difference += (minutes === 0) ? `<span>${seconds} S</span>` : Min;
-
-                    return difference;
-                }
-
 
                 $.getJSON(linkJson, function(data) {
 
@@ -182,40 +175,43 @@
                         return newData;
                     }
 
-                    if (!inputSpeed) {
-                        alert("Please Input Speed Limit");
-                    } else {
 
-                        document.getElementById("speedRange").innerHTML = `<ol class="rectangle-list">
-                            <li><a style='background-color: #FF0000;'> SPEED ${parseInt(inputSpeed)+1}+</a></li>
-                            <li><a style='background-color: #00e600;'> SPEED 1-${inputSpeed}</a></li>
-                            <li><a style='background-color: #ffaa00;'> SPEED 0</a></li>
-                        </ol>`
-                        let set1 = speedCatch(dataSet, inputSpeed)
-                        console.log(set1)
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+                    document.getElementById("speedRange").innerHTML = `<ol class="rectangle-list">
+                                <li><a style='background-color: #FF0000;'> SPEED ${parseInt(inputSpeed)+1}+</a></li>
+                                <li><a style='background-color: #00e600;'> SPEED 1-${inputSpeed}</a></li>
+                                <li><a style='background-color: #ffaa00;'> SPEED 0</a></li>
+                            </ol>`
+                    let set1 = speedCatch(dataSet, inputSpeed)
+                    console.log(set1)
 
-                        var resultText = "";
-                        for (let j = 0; j < set1.length; j++) {
+                    var resultText = "";
+                    for (let j = 0; j < set1.length; j++) {
 
-                            if (set1[j].length != 0) {
-                                var firstArr = set1[j][0]
-                                var lastArr = set1[j][set1[j].length - 1]
-                                var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
-                                resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
-
-                            }
+                        if (set1[j].length != 0) {
+                            var firstArr = set1[j][0]
+                            var lastArr = set1[j][set1[j].length - 1]
+                            var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
+                            resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
 
                         }
 
-                        document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
-                            "<b>OverLimit:</b><br/>" + resultText;
                     }
 
+                    document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
+                        "<b>OverLimit:</b><br/>" + resultText;
                     // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+
 
                     if (point) {
                         point.removeFrom(map);
                     }
+
+                    function getColor(speed) {
+                        return speed > inputSpeed ? '#FF0000' :
+                            speed > 0 ? '#00e600' :
+                            '#ffaa00';
+                    };
 
                     point = L.geoJson(data, {
 
