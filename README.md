@@ -1,6 +1,6 @@
 # Leaflet MultiPoint Color By Speed
 
-[Example](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/multiPointColorBySpeed.html)
+[Example 1](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/multiPointColorBySpeed.html)
 
 ![image](https://user-images.githubusercontent.com/58202287/133973903-a3995d23-4bc5-4ebc-ae7d-e60cf7b00eee.png)
 
@@ -14,6 +14,7 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/134884807-e7350f4e-b1c5-45f3-8ecc-0260c5dcec5a.png)
 
+[Example 3](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeed_CalculateSpeed.html)
 
 ## Code Example
 
