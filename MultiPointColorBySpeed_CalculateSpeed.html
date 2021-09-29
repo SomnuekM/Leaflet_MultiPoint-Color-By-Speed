@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- add icon link -->
+    <link rel = "icon" href ="hybrid-car.png" type = "image/x-icon">
+    <title>MultiPointColorBySpeed_CalculateSpeed</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href='Leaflet.MultiOptionsPolyline/base.css' rel='stylesheet' />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            z-index: -1;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+    <div class='clearfix contain'>
+
+        <div class='pin-topright space-right2 space-top2 width28 round pad2x pad1y fill-white'>
+            <div class="form-group">
+                <br>
+                <h6>Point History (Color By Speed)</h6>
+                <a href='https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demoGeoJson.geojson' target='_blank'>
+                    Demo Data
+                </a>
+            </div>
+
+            <div class="form-group">
+                <label for="speedSet">Speed Limit</label>
+                <input type='number' id="speedSet" class="form-control col-md-6" placeholder="100" />
+
+                <label for="getLink">Link</label>
+                <input type='text' id="getLink" class="form-control" placeholder="Input Link GeoJson" />
+            </div>
+
+            <div>
+                <button type="submit" value="Submit" class="btn btn-primary" onclick="return getLinkOnSubmit();">Submit</button>
+            </div>
+
+            <div>
+                <ol class="rectangle-list">
+                    <li><a style='background-color: #FF0000;'> SPEED 100+ </a></li>
+                    <li><a style='background-color: #FFC000;'> SPEED 90-99 </a></li>
+                    <li><a style='background-color: #FFFF00;'> SPEED 80-89 </a></li>
+                    <li><a style='background-color: #80FF00;'> SPEED 70-79 </a></li>
+                    <li><a style='background-color: #00E000;'> SPEED 0-69 </a></li>
+                </ol>
+
+            </div>
+
+            <div id="results">
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+
+    <script>
+        var startPoint = [14.0790606839815, 100.600900053978];
+        var map = L.map('map').setView(startPoint, 16);
+
+        //Google
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            attribution: '&copy;',
+            minZoom: 2,
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(map);
+
+        var point;
+
+        function getLinkOnSubmit() {
+            var linkJson = document.getElementById("getLink").value;
+            // var linkJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demoGeoJson.geojson'
+            if (!linkJson) {
+
+                alert("Please Input Link Json");
+
+            } else {
+
+                function getColor(speed) {
+                    return speed >= 100 ? '#FF0000' :
+                        speed >= 90 ? '#FFC000' :
+                        speed >= 80 ? '#FFFF00' :
+                        speed >= 70 ? '#80FF00' :
+                        '#00E000';
+                };
+
+                function formatDateTime(dateTimeData) {
+                    let dateTime = new Date(dateTimeData);
+                    var fullDate = ("0" + dateTime.getDate()).slice(-2) +
+                        "/" + ("0" + (dateTime.getMonth() + 1)).slice(-2) +
+                        "/" + dateTime.getFullYear()
+                    var fullTime = ("0" + dateTime.getHours()).slice(-2) +
+                        ":" + ("0" + dateTime.getMinutes()).slice(-2) +
+                        ":" + ("0" + dateTime.getSeconds()).slice(-2);
+                    return [fullDate, fullTime];
+                }
+
+                function timeDiffCalc(dateFuture, dateNow) {
+                    let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+
+                    // calculate minutes
+                    const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+                    diffInMilliSeconds -= minutes * 60;
+
+                    // calculate seconds
+                    var seconds = diffInMilliSeconds % 60;
+
+                    let difference = '';
+                    difference += (minutes === 0) ? `<span>${seconds} S</span>` : `<span style='color:orange;'>${minutes} M ${seconds} S</span>`;
+
+                    return difference;
+                }
+
+
+                $.getJSON(linkJson, function(data) {
+
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+                    var resp = data.features;
+                    var dataSet = [];
+                    for (const i in resp) {
+                        dataSet.push({
+                            "time": resp[i].properties.id,
+                            "speed": resp[i].properties.speed,
+                            "coord": resp[i].geometry.coordinates
+                        });
+                    }
+                    console.log(dataSet.length + " points")
+
+                    function speedCatch(data, floor) {
+
+                        var newData = [];
+                        var arr = [];
+                        data.forEach((dat, index, old) => {
+
+                            if (dat.speed >= floor) {
+                                arr.push(dat);
+                                if (index + 1 == old.length && arr) newData.push(arr);
+                            } else {
+                                if (arr.length > 0) newData.push(arr);
+                                arr = [];
+                            }
+                        });
+                        return newData;
+                    }
+
+                    if (!document.getElementById("speedSet").value) {
+                        alert("Please Input Speed Limit");
+                    } else {
+                        let set1 = speedCatch(dataSet, document.getElementById("speedSet").value)
+                        console.log(set1)
+
+                        var resultText = "";
+                        for (let j = 0; j < set1.length; j++) {
+
+                            if (set1[j].length != 0) {
+                                var firstArr = set1[j][0]
+                                var lastArr = set1[j][set1[j].length - 1]
+
+                                var dateData = formatDateTime(firstArr.time)[0]
+                                var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
+                                resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
+
+                            }
+
+                        }
+
+                        document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
+                            "<b>OverLimit:</b><br/>" + resultText;
+                    }
+
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+
+                    if (point) {
+                        point.removeFrom(map);
+                    }
+
+                    point = L.geoJson(data, {
+
+                        pointToLayer: function(feature, latlng) {
+                            return L.circleMarker(latlng, {
+                                radius: 5.5,
+                                opacity: .5,
+                                color: getColor(feature.properties.speed),
+                                fillColor: getColor(feature.properties.speed),
+                                fillOpacity: 0.8
+                            })
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer._leaflet_id = feature.properties.id;
+
+                            var popupContent = "<p><b>" + formatDateTime(feature.properties.id)[0] + " " + formatDateTime(feature.properties.id)[1] + "</b> </br>" +
+                                "<b>speed : </b>" + feature.properties.speed + "</br>";
+                            if (feature.properties && feature.properties.popupContent) {
+                                popupContent += feature.properties.popupContent;
+                            }
+                            layer.bindPopup(popupContent);
+
+                        }
+                    });
+
+                    // zoom the map to the polyline
+                    map.fitBounds(point.getBounds());
+                    //Add selected points back into map as green circles.
+                    map.addLayer(point);
+
+                });
+
+            }
+        }
+    </script>
+</body>
+
+</html>
