@@ -13,7 +13,9 @@ body {
 
 .width28 {
     width: 280px;
+    height: 735px;
     float: left;
+    overflow: scroll;
 }
 
 
