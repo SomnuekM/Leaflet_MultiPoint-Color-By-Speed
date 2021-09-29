@@ -11,6 +11,7 @@
 ![image](https://user-images.githubusercontent.com/58202287/134484140-c76500e4-1d1f-4e07-ba4d-adaedf89106c.png)
 
 [Example 3](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeed_CalculateSpeed.html)
+![image](https://user-images.githubusercontent.com/58202287/135198974-19194360-358e-4b06-bbfe-f0af0bc18f5c.png)
 
 [Highcharts StockChart](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/speedChart.html)
 
@@ -22,11 +23,12 @@
 ```html
 <script>
 function getColor(speed) {
-            return speed >= 100 ? '#FF0000' :
-                speed >= 90 ? '#FFC000' :
-                speed >= 80 ? '#FFFF00' :
-                speed >= 70 ? '#80FF00' :
-                '#00E000';
+             return speed > 100 ? '#FF0000' :
+                        speed > 90 ? '#FFC000' :
+                        speed > 80 ? '#FFFF00' :
+                        speed > 70 ? '#80FF00' :
+                        speed > 0 ? '#00E000' :
+                        '#669999';
  };
 
 let urlJson = 'https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demo.json';
