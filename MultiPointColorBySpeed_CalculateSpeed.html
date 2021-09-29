@@ -131,7 +131,11 @@
                     var seconds = diffInMilliSeconds % 60;
 
                     let difference = '';
-                    difference += (minutes === 0) ? `<span>${seconds} S</span>` : `<span style='color:orange;'>${minutes} M ${seconds} S</span>`;
+                    var color='';
+                    if (minutes >= 2) {
+                        color = '#FF0000';
+                    }
+                    difference += (minutes === 0) ? `<span>${seconds} S</span>` : `<b style='color:` + color + `;'>${minutes} M ${seconds} S</b>`;
 
                     return difference;
                 }
