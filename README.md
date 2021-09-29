@@ -10,11 +10,12 @@
 
 ![image](https://user-images.githubusercontent.com/58202287/134484140-c76500e4-1d1f-4e07-ba4d-adaedf89106c.png)
 
+[Example 3](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeed_CalculateSpeed.html)
+
 [Highcharts StockChart](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/speedChart.html)
 
 ![image](https://user-images.githubusercontent.com/58202287/134884807-e7350f4e-b1c5-45f3-8ecc-0260c5dcec5a.png)
 
-[Example 3](https://somnuekm.github.io/Leaflet_MultiPoint-Color-By-Speed/MultiPointColorBySpeed_CalculateSpeed.html)
 
 ## Code Example
 
