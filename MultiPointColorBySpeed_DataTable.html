@@ -129,7 +129,7 @@
     <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
-      <script>
+    <script>
         function openNav() {
             document.getElementById("mySidenav").style.width = "280px";
             document.getElementById("mySidenav").style.display = "block";
@@ -279,7 +279,7 @@
                     }
                     setTimeout(function() {
                         showDataTable(DataTable)
-                    }, 1000);
+                    }, 500);
 
                     document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
                         "<b>OverLimit:</b><br/>" + resultText;
@@ -351,10 +351,7 @@
                 className: "btn btn-dark btn-sm"
             }],
             responsive: true,
-            scrollY: true,
-            scrollX: true,
-            autoWidth: false,
-            scrollCollapse: true,
+            autoWidth: true,
             paging: true,
             pageLength: 10,
             columns: [{
