@@ -129,7 +129,7 @@
     <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
-    <script>
+      <script>
         function openNav() {
             document.getElementById("mySidenav").style.width = "280px";
             document.getElementById("mySidenav").style.display = "block";
@@ -189,7 +189,7 @@
         }
 
         var point;
-        var DataTable = [];
+
 
 
         function getLinkOnSubmit() {
@@ -255,10 +255,11 @@
                     let set1 = speedCatch(dataSet, inputSpeed)
                     console.log(set1)
 
-                    document.getElementById("showModal").innerHTML = `<button onclick="showDataTable()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Table</button>`
+                    document.getElementById("showModal").innerHTML = `<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Table</button>`
 
                     var resultText = "";
                     var setDataDataTable = [];
+                    var DataTable = [];
                     for (let j = 0; j < set1.length; j++) {
                         if (set1[j].length != 0) {
                             var firstArr = set1[j][0]
@@ -266,7 +267,7 @@
                             var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
                             resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
 
-                            var setDataDataTable = {
+                            setDataDataTable = {
                                 date_time: formatDateTime(dataSet[0].time)[0] + " " + timeFirstLast,
                                 all_points: dataSet.length.toLocaleString(),
                                 points: set1[j].length,
@@ -276,6 +277,9 @@
                         }
 
                     }
+                    setTimeout(function() {
+                        showDataTable(DataTable)
+                    }, 1000);
 
                     document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
                         "<b>OverLimit:</b><br/>" + resultText;
@@ -374,16 +378,12 @@
         table.buttons().container()
             .appendTo($('.col-md-6:eq(0)', table.table().container()));
 
+        $('#dataTable').DataTable()
+            .columns.adjust()
+            .responsive.recalc();
 
-
-        function showDataTable() {
-            setTimeout(function() {
-                $('#dataTable').DataTable()
-                    .columns.adjust()
-                    .responsive.recalc();
-
-                table.clear().rows.add(DataTable).draw();
-            }, 555)
+        function showDataTable(DataTable) {
+            table.clear().rows.add(DataTable).draw();
         }
     </script>
 </body>
