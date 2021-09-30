@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- add icon link -->
+    <link rel = "icon" href ="hybrid-car.png" type = "image/x-icon">
+    <title>MultiPointColorBySpeed_CalculateSpeed</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href='custom-style.css' rel='stylesheet' />
+  
+    <link href='https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css' rel='stylesheet' />
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.js'></script>
+
+    <link href='https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css' rel='stylesheet' />
+    <link href='https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap4.min.css' rel='stylesheet' />
+    <link href='https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css' rel='stylesheet' />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            z-index: -1;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <span class="openbtn" onclick="openNav()">&#9776;</span>
+    <div class='clearfix' id="mySidenav">
+
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        <div class="form-group">
+            <br>
+            <h6>Point History (Color By Speed)</h6>
+            <a href='https://raw.githubusercontent.com/SomnuekM/Leaflet_MultiPoint-Color-By-Speed/main/dataJson/demoGeoJson.geojson' target='_blank'>
+                    Demo Data
+                </a>
+        </div>
+
+        <div class="form-group">
+            <label for="speedSet">Speed Limit</label>
+            <input type='number' id="speedSet" class="form-control col-md-6" placeholder="100" />
+
+            <label for="getLink">Link</label>
+            <input type='text' id="getLink" class="form-control" placeholder="Input Link GeoJson" />
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <button type="submit" value="Submit" class="btn btn-primary" onclick="return getLinkOnSubmit();">Submit</button>
+            </div>
+            <div class="col" id="showModal">
+
+            </div>
+        </div>
+
+
+
+        <div id="speedRange"></div>
+
+        <div id="results"></div>
+
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal mobile-nav-modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Data Table</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="table-responsive" style="overflow:auto;">
+                        <table class="table table-striped table-bordered dt-responsive nowrap" style="width: 100%;font-stretch: extra-condensed;" cellspacing="0" id="dataTable">
+                            <thead style="width: 100%;">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>All Points</th>
+                                    <th>Date Time</th>
+                                    <th>Points</th>
+                                    <th>Period</th>
+                                </tr>
+                            </thead>
+                            <tbody> </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "280px";
+            document.getElementById("mySidenav").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("mySidenav").style.display = "none";
+        }
+    </script>
+
+    <script>
+        var startPoint = [14.0790606839815, 100.600900053978];
+        var map = L.map('map').setView(startPoint, 16);
+
+        //Google
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            attribution: '&copy;',
+            minZoom: 2,
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(map);
+
+        function formatDateTime(dateTimeData) {
+            let dateTime = new Date(dateTimeData);
+            var fullDate = ("0" + dateTime.getDate()).slice(-2) +
+                "/" + ("0" + (dateTime.getMonth() + 1)).slice(-2) +
+                "/" + dateTime.getFullYear()
+            var fullTime = ("0" + dateTime.getHours()).slice(-2) +
+                ":" + ("0" + dateTime.getMinutes()).slice(-2) +
+                ":" + ("0" + dateTime.getSeconds()).slice(-2);
+            return [fullDate, fullTime];
+        }
+
+        function timeDiffCalc(dateFuture, dateNow) {
+            let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+
+            // calculate minutes
+            const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+            diffInMilliSeconds -= minutes * 60;
+
+            // calculate seconds
+            var seconds = diffInMilliSeconds % 60;
+
+            let difference = '';
+            var color = '',
+                Min = ``;
+            if (minutes >= 2) {
+                color = '#FF0000';
+                Min = `<b style='color:` + color + `;'>${minutes} M ${seconds} S</b>`
+            } else {
+                Min = `<span style='color:#000000;'>${minutes} M ${seconds} S</span>`
+            }
+            difference += (minutes === 0) ? `<span>${seconds} S</span>` : Min;
+
+            return difference;
+        }
+
+        var point;
+        var DataTable = [];
+
+
+        function getLinkOnSubmit() {
+            var linkJson = document.getElementById("getLink").value;
+            var inputSpeed = document.getElementById("speedSet").value;
+
+            if (!linkJson || !inputSpeed) {
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Something went wrong!!',
+                    text: 'Please Input Link Json AND Speed Limit',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+
+            } else {
+
+                $.getJSON(linkJson, function(data) {
+
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+                    var resp = data.features;
+                    var dataSet = [];
+
+                    for (const i in resp) {
+                        dataSet.push({
+                            "time": resp[i].properties.id,
+                            "speed": resp[i].properties.speed,
+                            "coord": resp[i].geometry.coordinates
+                        });
+                    }
+                    console.log(dataSet.length + " points")
+                    var dateData = formatDateTime(dataSet[0].time)[0] + " - " + formatDateTime(dataSet[0].time)[1] + " to " + formatDateTime(dataSet[dataSet.length - 1].time)[1]
+
+                    $.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + dataSet[0].coord[1] + '&lon=' + dataSet[0].coord[0] + '', function(data) {
+                        console.log(data.address.city_district);
+                    });
+
+                    function speedCatch(data, floor) {
+
+                        var newData = [];
+                        var arr = [];
+                        data.forEach((dat, index, old) => {
+
+                            if (dat.speed > floor) {
+                                arr.push(dat);
+                                if (index + 1 == old.length && arr) newData.push(arr);
+                            } else {
+                                if (arr.length > 0) newData.push(arr);
+                                arr = [];
+                            }
+                        });
+                        return newData;
+                    }
+
+
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+                    document.getElementById("speedRange").innerHTML = `<ol class="rectangle-list">
+                                <li><a style='background-color: #FF0000;'> SPEED ${parseInt(inputSpeed)+1}+</a></li>
+                                <li><a style='background-color: #00e600;'> SPEED 1-${inputSpeed}</a></li>
+                                <li><a style='background-color: #ffaa00;'> SPEED 0</a></li>
+                            </ol>`
+                    let set1 = speedCatch(dataSet, inputSpeed)
+                    console.log(set1)
+
+                    document.getElementById("showModal").innerHTML = `<button onclick="showDataTable()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Table</button>`
+
+                    var resultText = "";
+                    var setDataDataTable = [];
+                    for (let j = 0; j < set1.length; j++) {
+                        if (set1[j].length != 0) {
+                            var firstArr = set1[j][0]
+                            var lastArr = set1[j][set1[j].length - 1]
+                            var timeFirstLast = formatDateTime(firstArr.time)[1] + " - " + formatDateTime(lastArr.time)[1]
+                            resultText += "<small>" + [j + 1] + " : " + timeFirstLast + " ⨠  </small>" + set1[j].length + " Points <br> ◷ " + timeDiffCalc(firstArr.time, lastArr.time) + "<br/>"
+
+                            var setDataDataTable = {
+                                date_time: formatDateTime(dataSet[0].time)[0] + " " + timeFirstLast,
+                                all_points: dataSet.length.toLocaleString(),
+                                points: set1[j].length,
+                                time_in_over: timeDiffCalc(firstArr.time, lastArr.time)
+                            }
+                            DataTable.push(setDataDataTable);
+                        }
+
+                    }
+
+                    DataTable.push(setDataDataTable)
+
+                    document.getElementById("results").innerHTML = "<b>Date: </b>" + dateData + "<br/><b>All: </b> " + dataSet.length.toLocaleString() + " Points<br/>" +
+                        "<b>OverLimit:</b><br/>" + resultText;
+                    // ⁂⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁙⁂
+
+
+                    if (point) {
+                        point.removeFrom(map);
+                    }
+
+                    function getColor(speed) {
+                        return speed > inputSpeed ? '#FF0000' :
+                            speed > 0 ? '#00e600' :
+                            '#ffaa00';
+                    };
+
+                    point = L.geoJson(data, {
+
+                        pointToLayer: function(feature, latlng) {
+                            return L.circleMarker(latlng, {
+                                radius: 5.5,
+                                opacity: .5,
+                                color: getColor(feature.properties.speed),
+                                fillColor: getColor(feature.properties.speed),
+                                fillOpacity: 0.8
+                            })
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer._leaflet_id = feature.properties.id;
+
+                            var popupContent = "<p><b>" + formatDateTime(feature.properties.id)[0] + " " + formatDateTime(feature.properties.id)[1] + "</b> </br>" +
+                                "<b>speed : </b>" + feature.properties.speed + "</br>";
+                            if (feature.properties && feature.properties.popupContent) {
+                                popupContent += feature.properties.popupContent;
+                            }
+                            layer.bindPopup(popupContent);
+
+                        }
+
+                    });
+
+                    // zoom the map to the polyline
+                    map.fitBounds(point.getBounds());
+                    //Add selected points back into map as green circles.
+                    map.addLayer(point);
+
+                });
+
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        var table = $('#dataTable').DataTable({
+            "buttons": [{
+                extend: 'copy',
+                className: "btn btn-warning btn-sm",
+            }, {
+                extend: "csv",
+                className: "btn btn-primary btn-sm"
+            }, {
+                extend: "excel",
+                className: "btn btn-success btn-sm"
+            }, {
+                extend: 'pdf',
+                className: "btn btn-info btn-sm"
+            }, {
+                extend: "print",
+                className: "btn btn-dark btn-sm"
+            }],
+            responsive: true,
+            scrollY: true,
+            scrollX: true,
+            autoWidth: false,
+            scrollCollapse: true,
+            paging: true,
+            pageLength: 10,
+            columns: [{
+                data: null,
+                render: function(data, type, full, meta) {
+                    return meta.row + 1;
+                }
+            }, {
+                data: "all_points"
+            }, {
+                data: "date_time"
+            }, {
+                data: "points"
+            }, {
+                data: "time_in_over"
+            }],
+            "order": [
+                [0, "asc"]
+            ]
+        });
+        table.buttons().container()
+            .appendTo($('.col-md-6:eq(0)', table.table().container()));
+
+
+
+        function showDataTable() {
+            setTimeout(function() {
+                $('#dataTable').DataTable()
+                    .columns.adjust()
+                    .responsive.recalc();
+
+                table.clear().rows.add(DataTable).draw();
+            }, 555)
+        }
+    </script>
+</body>
+
+</html>
